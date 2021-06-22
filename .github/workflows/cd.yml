@@ -34,7 +34,7 @@ jobs:
           REF: ${{ github.environment }}
         run: |
           # Set variables
-          BRANCH=${REF#refs/heads/}
+          BRANCH=${GITHUB_REF#refs/heads/}
           REPOSITORY=`echo $REPO | tr "/" "-" | tr "_" "-"`
           ENVIRONMENT=`echo $BRANCH-$REPOSITORY-${{ secrets.AWS_REGION }} | tr '[:upper:]' '[:lower:]'`
           # In this step we are setting variables and persistenting them
