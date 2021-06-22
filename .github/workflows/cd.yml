@@ -6,11 +6,11 @@ on:
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: ${{ steps.sam_deploy.outputs.SimplePingApi }}
     outputs:
       env-name: ${{ steps.env-name.outputs.environment }}
-      environment:
-            name: staging
-            url: ${{ steps.sam_deploy.outputs.SimplePingApi }}
     steps:
       - uses: actions/checkout@v2
       - name: Installing
