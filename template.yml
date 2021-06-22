@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  SimplePingApi:
+     Type: AWS::Serverless::Api
+     Properties:
+       StageName: Prod
+       Auth:
+         ApiKeyRequired: true
+         UsagePlan:
+           CreateUsagePlan: PER_API
+           Quota:
+             Limit: 500
+             Period: DAY
+           Throttle:
+             RateLimit: 5
+  SimplePingFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: src/index.handler
+      Runtime: nodejs14.x
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Role: 'arn:aws:iam::765065967862:role/service-role/PreProdTS-role-6kmsulog'
+      Events:
+        PublicApi:
+          Type: Api
+          StageName: ${{stage}}
+          Properties:
+            Path: /ping
+            Method: ANY
+            RestApiId:
+               Ref: SimplePingApi
+Outputs:
+  SimplePingApi:
+    Description: "API Gateway endpoint URL for Prod stage for SimplePing function"
+    Value: !Sub "https://${SimplePingApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/SimplePing/"
+  SimplePingFunction:
+    Description: "SimplePing Lambda Function ARN"
+    Value: !GetAtt SimplePingFunction.Arn
