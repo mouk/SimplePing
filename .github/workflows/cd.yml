@@ -64,3 +64,61 @@ jobs:
               'ParameterKey=stage,ParameterValue=${{ github.environment }} \
               ParameterKey=Version,ParameterValue=${{ steps.vars.outputs.version }}' \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
+  prod-staging:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+      url: ${{ steps.sam_deploy.outputs.SimplePingApi }}
+    outputs:
+      env-name: ${{ steps.env-name.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Installing
+        run: npm i
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configure variables
+        shell: bash
+        id: vars
+        env:
+          REPO: ${{ github.repository }}
+          HASH: ${{ github.sha }}
+          REF: ${{ github.environment }}
+        run: |
+          # Set variables
+          BRANCH=${GITHUB_REF#refs/heads/}
+          REPOSITORY=`echo $REPO | tr "/" "-" | tr "_" "-"`
+          ENVIRONMENT=`echo $BRANCH-$REPOSITORY-${{ secrets.AWS_REGION }} | tr '[:upper:]' '[:lower:]'`
+          # In this step we are setting variables and persistenting them
+          # into the environment so that they can be utilized in other steps
+          echo "::set-output name=branch::$BRANCH"
+          echo "::set-output name=repository::$REPOSITORY"
+          echo "::set-output name=environment::$ENVIRONMENT"
+          # Output variables to ensure their values are set correctly when ran
+          echo "The region is ${{ secrets.AWS_REGION }}"
+          echo "The repository is $REPOSITORY"
+          echo "The environment is $ENVIRONMENT"
+          echo "The branch is $BRANCH"
+      - name: SAM Build
+        run: |
+          sam build
+      - name: SAM Deploy
+        id: sam_deploy
+        run: |
+          # Create S3 Bucket to store code
+          if !  (aws s3 ls | grep '${{ steps.vars.outputs.environment }}'); then aws s3 mb s3://${{ steps.vars.outputs.environment }}; fi
+          # aws s3 mb s3://${{ steps.vars.outputs.environment }}
+          # Run SAM Deploy
+          sam deploy --template-file .aws-sam/build/template.yaml \
+            --stack-name ${{ steps.vars.outputs.environment }} \
+            --s3-bucket ${{ steps.vars.outputs.environment }} \
+            --parameter-overrides \
+              'ParameterKey=stage,ParameterValue=${{ github.environment }} \
+              ParameterKey=Version,ParameterValue=${{ steps.vars.outputs.version }}' \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM

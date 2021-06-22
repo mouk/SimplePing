@@ -39,7 +39,7 @@ Resources:
 Outputs:
   SimplePingApi:
     Description: "API Gateway endpoint URL for Prod stage for SimplePing function"
-    Value: !Sub "https://${SimplePingApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/SimplePing/"
+    Value: !Sub "https://${SimplePingApi}.execute-api.${AWS::Region}.amazonaws.com/{Stage}/ping"
   SimplePingFunction:
     Description: "SimplePing Lambda Function ARN"
     Value: !GetAtt SimplePingFunction.Arn
