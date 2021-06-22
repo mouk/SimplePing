@@ -1,11 +1,19 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Serverless Specification template describing your function.
+
+Parameters:
+  Stage:
+    Type: String
+    Default: staging
+    Description: Parameter for getting the deployment stage
+
 Resources:
   SimplePingApi:
      Type: AWS::Serverless::Api
      Properties:
-       StageName: ${{stage}}
+       StageName: 
+        Fn::Sub: '${Stage}'
        Auth:
          ApiKeyRequired: false
   SimplePingFunction:
@@ -13,6 +21,8 @@ Resources:
     Properties:
       Handler: src/index.handler
       Runtime: nodejs14.x
+      FunctionName:
+        Fn::Sub: '${Stage}SimplePing'
       CodeUri: .
       Description: ''
       MemorySize: 128
@@ -21,7 +31,8 @@ Resources:
       Events:
         PublicApi:
           Type: Api
-          StageName: ${{stage}}
+          StageName: 
+            Fn::Sub: '${Stage}'
           Properties:
             Path: /ping
             Method: ANY
