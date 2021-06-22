@@ -21,8 +21,6 @@ Resources:
     Properties:
       Handler: src/index.handler
       Runtime: nodejs14.x
-      FunctionName:
-        Fn::Sub: '${Stage}SimplePing'
       CodeUri: .
       Description: ''
       MemorySize: 128
