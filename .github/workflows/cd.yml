@@ -23,7 +23,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ steps.installtion.outputs.region }}
+          aws-region: ${{ steps.installing.outputs.region }}
       - name: SAM Validate
         run: |
           sam validate
@@ -38,14 +38,14 @@ jobs:
           # Set variables
           BRANCH=${GITHUB_REF#refs/heads/}
           REPOSITORY=`echo $REPO | tr "/" "-" | tr "_" "-"`
-          ENVIRONMENT=`echo $BRANCH-$REPOSITORY-${{ steps.installtion.outputs.region }} | tr '[:upper:]' '[:lower:]'`
+          ENVIRONMENT=`echo $BRANCH-$REPOSITORY-${{ steps.installing.outputs.region }} | tr '[:upper:]' '[:lower:]'`
           # In this step we are setting variables and persistenting them
           # into the environment so that they can be utilized in other steps
           echo "::set-output name=branch::$BRANCH"
           echo "::set-output name=repository::$REPOSITORY"
           echo "::set-output name=environment::$ENVIRONMENT"
           # Output variables to ensure their values are set correctly when ran
-          echo "The region is ${{ steps.installtion.outputs.region }}"
+          echo "The region is ${{ steps.installing.outputs.region }}"
           echo "The repository is $REPOSITORY"
           echo "The environment is $ENVIRONMENT"
           echo "The branch is $BRANCH"
@@ -86,6 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Installing
+        id: installing
         run: |
           npm i
           echo "::set-output name=region::eu-central-1"
@@ -95,7 +96,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ steps.installtion.outputs.region }}
+          aws-region: ${{ steps.installing.outputs.region }}
       - name: Configure variables
         shell: bash
         id: vars
@@ -107,14 +108,14 @@ jobs:
           # Set variables
           BRANCH=${GITHUB_REF#refs/heads/}
           REPOSITORY=`echo $REPO | tr "/" "-" | tr "_" "-"`
-          ENVIRONMENT=`echo $BRANCH-$REPOSITORY-${{ steps.installtion.outputs.region }} | tr '[:upper:]' '[:lower:]'`
+          ENVIRONMENT=`echo $BRANCH-$REPOSITORY-${{ steps.installing.outputs.region }} | tr '[:upper:]' '[:lower:]'`
           # In this step we are setting variables and persistenting them
           # into the environment so that they can be utilized in other steps
           echo "::set-output name=branch::$BRANCH"
           echo "::set-output name=repository::$REPOSITORY"
           echo "::set-output name=environment::$ENVIRONMENT"
           # Output variables to ensure their values are set correctly when ran
-          echo "The region is ${{ steps.installtion.outputs.region }}"
+          echo "The region is ${{ steps.installing.outputs.region }}"
           echo "The repository is $REPOSITORY"
           echo "The environment is $ENVIRONMENT"
           echo "The branch is $BRANCH"
