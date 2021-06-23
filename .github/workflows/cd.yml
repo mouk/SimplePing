@@ -122,3 +122,8 @@ jobs:
               'ParameterKey=stage,ParameterValue=${{ github.environment }} \
               ParameterKey=Version,ParameterValue=${{ steps.vars.outputs.version }}' \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
+          URL=${sam aws cloudformation describe-stacks \
+            --stack-name ${{ steps.vars.outputs.environment }} \
+            --query 'Stacks[0].Outputs[?OutputKey==`SimplePingApi`].OutputValue' \
+            --output text}
+            echo "::set-output name=url::$URL"
