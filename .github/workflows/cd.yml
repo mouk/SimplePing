@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: ${{ steps.sam_deploy.outputs.SimplePingApi }}
+      url: ${{ steps.EXTRACT_URL.outputs.url }}
     outputs:
       env-name: ${{ steps.env-name.outputs.environment }}
     steps:
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: prod
-      url: ${{ steps.sam_deploy.outputs.SimplePingApi }}
+      url: ${{ steps.EXTRACT_URL.outputs.url }}
     outputs:
       env-name: ${{ steps.env-name.outputs.environment }}
     steps:
