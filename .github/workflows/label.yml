@@ -12,7 +12,7 @@ jobs:
       - name: Installing
         id: installing
         run: |
-        CLOC=`git diff --numstat refs/heads/master HEAD  --format="" "$@" | awk '{files += 1}{ins += $1}{del += $2} END{print ins+del}'`
+          CLOC=`git diff --numstat refs/heads/master HEAD  --format="" "$@" | awk '{files += 1}{ins += $1}{del += $2} END{print ins+del}'`
           echo "::set-output name=$CLOC"
       - uses: actions-ecosystem/action-add-labels@v1
         if: $CLOC > 0
