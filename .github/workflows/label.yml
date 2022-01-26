@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Installing
-        id: installing
+      - name: counting
+        id: counting
         run: |
           CLOC=`git diff --numstat refs/heads/master HEAD  --format="" "$@" | awk '{files += 1}{ins += $1}{del += $2} END{print ins+del}'`
-          echo "::set-output name=$CLOC"
+          echo "::set-output clock=$CLOC"
       - uses: actions-ecosystem/action-add-labels@v1
-        if: $CLOC > 0
+        if: $${{ steps.counting.outputs.clock }} > 0
         with:
           labels: |
             big
