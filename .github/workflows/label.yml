@@ -1,8 +1,7 @@
 name: Add Labels
 
 on:
-  pull_request:
-    types: opened
+  commit
 
 jobs:
   add_labels:
