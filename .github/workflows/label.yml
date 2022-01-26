@@ -1,7 +1,6 @@
 name: Add Labels
 
-on:
-  commit
+on: push
 
 jobs:
   add_labels:
