@@ -10,6 +10,6 @@ jobs:
       - name: counting
         id: counting
         run: |
-          CLOC=`git diff --numstat refs/heads/master HEAD  --format="" "$@" | awk '{files += 1}{ins += $1}{del += $2} END{print ins+del}'`
-          echo "::set-output clock=$CLOC"
+          CLOC=`git diff --numstat refs/heads/master HEAD  --format="" "$@" | awk '{files += 1}{ins += $1}{del += $2} END{ins+del}'`
+          echo "::set-output cloc=$CLOC"
           if $CLOC > 1; then exit 1 fi
